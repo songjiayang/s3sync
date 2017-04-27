@@ -26,4 +26,19 @@ It cached file's mtime and fsize, so can upload the changes only.
 
 ### Command
 
-you can run `file_scan -h` to get all the options
+you can run `file_scan -h` to get all the options：
+
+```
+-config string
+    the config file (default "./config.json")
+-download
+    download files from storage
+-lu
+    list upload status
+-luf
+    list all upload failed files
+-r string
+    root path (default "./data/test")
+-upload
+    upload files to storage
+```
