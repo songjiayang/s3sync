@@ -1,0 +1,16 @@
+{
+  "root": "/Users/sjy/workspace/golang/src/github.com/file_scan",
+  "scan_worker": 20,
+  "db": "./data/db",
+  "s3sync": {
+    "s3": {
+      "access_key_id": "",
+      "secret_access_key":"",
+      "host":"https://api-s3.qiniu.com/",
+      "region":"cn-east-1",
+      "bucket":"test"
+    },
+    "worker": 20
+  },
+  "trim": true
+}
