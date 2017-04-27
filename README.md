@@ -1,8 +1,8 @@
 # s3_sync
-Local files auto sync to cloud storages with S3API. 
+Local files auto sync to cloud storages with S3API.
 It cached file's mtime and fsize, so can upload the changes only.
 
-### Config 
+### Config
 
 ```
 {
@@ -17,10 +17,13 @@ It cached file's mtime and fsize, so can upload the changes only.
       "region":"",
       "bucket":""
     },
-    "worker": 20 // the number of works to upload files.
-  }
+    "worker": 20 // the number of works for s3sync.
+  },
+  "trim": true // for upload file prefix trim
 }
 
 ```
 
+### Command
 
+you can run `file_scan -h` to get all the options
