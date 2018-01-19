@@ -1,7 +1,7 @@
 # s3sync
 Local files auto sync to cloud storages with S3API.
 
-It cached file's `mtime` and `fsize` for performance, so it can sync the difference only.
+It cached file's `mtime` and `fsize` for performance, so sync the difference only.
 
 ### Installation 
 
@@ -9,13 +9,13 @@ Use `go get github.com/songjiayang/s3sync` or download the binary [relelase](htt
 
 ### Configuration
 
-s3sync run with default config file `config.json`, of course you can change it with `-config` option. 
+`s3sync` run with config file `config.json`, of course you can change it with `-config` option. 
 
-The config detail infomation is:
+The config details are:
 
 ```
 {
-  "root": "~",
+  "root": "/home/user/example", // target folder
   "scan_worker": 20,  // the number of works to scan the files changes.
   "db": "./data/db", // cache files
   "s3sync": {
@@ -36,7 +36,7 @@ The config detail infomation is:
 
 ### Usage
 
-you can run `s3sync -h` to get all the options：
+You can run `s3sync -h` to check all options：
 
 ```
 -config string
@@ -54,6 +54,8 @@ you can run `s3sync -h` to get all the options：
     
 -d	run sync task backgound with interval time, default: 30s
 ```
+
+Use case example:
 
 - sync files upload only
 
