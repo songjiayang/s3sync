@@ -1,10 +1,10 @@
-package s3sync
+package syncer
 
 import (
 	"sync"
 
-	"github.com/file_scan/file"
-	"github.com/file_scan/storage"
+	"github.com/songjiayang/s3sync/file"
+	"github.com/songjiayang/s3sync/storage"
 )
 
 type Config struct {

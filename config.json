@@ -12,5 +12,6 @@
     },
     "worker": 20
   },
-  "trim": true
+  "trim": true,
+  "interval": 30
 }

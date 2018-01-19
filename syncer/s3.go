@@ -1,4 +1,4 @@
-package s3sync
+package syncer
 
 import (
 	"bytes"

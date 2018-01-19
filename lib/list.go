@@ -3,7 +3,7 @@ package lib
 import (
 	"io/ioutil"
 
-	ff "github.com/file_scan/file"
+	ff "github.com/songjiayang/s3sync/file"
 )
 
 func ListDir(dir string) (folders []string, files []*ff.FileModel) {

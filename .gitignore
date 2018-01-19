@@ -2,3 +2,4 @@ data
 bin
 .DS_Store
 pkg
+config.json.example

@@ -3,16 +3,18 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
+	"time"
 
-	"github.com/file_scan/s3sync"
+	"github.com/songjiayang/s3sync/syncer"
 )
 
 type Config struct {
 	Root       string         `json:"root"`
 	ScanWorker int            `json:"scan_worker"`
 	DB         string         `json:"db"`
-	SyncConfig *s3sync.Config `json:"s3sync"`
+	SyncConfig *syncer.Config `json:"s3sync"`
 	Trim       bool           `json:"trim"`
+	Interval   int            `json:"interval"` // sync time durting
 }
 
 func LoadFile(file string) (cfg *Config, err error) {
@@ -23,4 +25,14 @@ func LoadFile(file string) (cfg *Config, err error) {
 
 	err = json.Unmarshal(buf, &cfg)
 	return
+}
+
+func (this *Config) Duration() time.Duration {
+	interval := this.Interval
+
+	if interval == 0 {
+		interval = 30
+	}
+
+	return time.Duration(interval) * time.Second
 }

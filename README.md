@@ -10,12 +10,12 @@ It cached file's mtime and fsize, so can upload the changes only.
   "scan_worker": 20,  // the number of works to scan the files changes.
   "db": "./data/db", // cache files
   "s3sync": {
-    "s3": {
+    "s3": {  //example with qiniu
       "access_key_id": "",
       "secret_access_key":"",
-      "host":"",
-      "region":"",
-      "bucket":""
+      "host":"https://api-s3.qiniu.com/",
+      "region":"cn-east-1",
+      "bucket":"test"
     },
     "worker": 20 // the number of works for s3sync.
   },

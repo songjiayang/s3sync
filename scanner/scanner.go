@@ -1,12 +1,12 @@
 package scanner
 
 import (
-	"fmt"
+	"log"
 	"sync"
 	"time"
 
-	ff "github.com/file_scan/file"
-	"github.com/file_scan/lib"
+	ff "github.com/songjiayang/s3sync/file"
+	"github.com/songjiayang/s3sync/lib"
 )
 
 type Scanner struct {
@@ -53,7 +53,7 @@ func (this *Scanner) Status() {
 			break
 		}
 		time.Sleep(time.Second)
-		fmt.Println("scanned files", len(this.Files()))
+		log.Println("scanned files", len(this.Files()))
 	}
 }
 

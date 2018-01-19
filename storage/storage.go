@@ -3,11 +3,12 @@ package storage
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
-	ff "github.com/file_scan/file"
-	"github.com/file_scan/util"
+	ff "github.com/songjiayang/s3sync/file"
+	"github.com/songjiayang/s3sync/util"
 )
 
 type DiskStorage struct {
@@ -85,6 +86,6 @@ func (this *DiskStorage) Status() {
 			break
 		}
 		time.Sleep(time.Second)
-		fmt.Println("left upload files", this.UploadFilesCount)
+		log.Println("left upload files", this.UploadFilesCount)
 	}
 }

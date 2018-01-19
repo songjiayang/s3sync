@@ -1,7 +1,8 @@
-package s3sync
+package syncer
 
 import (
 	"fmt"
+	"log"
 	"sync"
 	"time"
 )
@@ -70,12 +71,12 @@ func (this *Downloader) run() {
 	close(queue)
 	wg.Wait()
 
-	fmt.Println("total finish download", this.finish)
+	log.Println("total finish download", this.finish)
 }
 
 func (this *Downloader) status() {
 	for !this.isFinished {
 		time.Sleep(3 * time.Second)
-		fmt.Println("finish download", this.finish)
+		log.Println("finish download", this.finish)
 	}
 }

@@ -1,12 +1,13 @@
-package s3sync
+package syncer
 
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
-	"github.com/file_scan/util"
+	"github.com/songjiayang/s3sync/util"
 )
 
 type SyncResult struct {
@@ -54,19 +55,19 @@ func (this *SyncResult) Recover() (err error) {
 }
 
 func (this *SyncResult) PrintStat() {
-	fmt.Println(this.printTitle())
-	fmt.Println("Start at:", time.Unix(this.StartAt, 0))
-	fmt.Println("End at:", time.Unix(this.EndAt, 0))
-	fmt.Println("Succeed count:", this.SucceedCount)
-	fmt.Println("Succeed capacity:", this.SucceedCapacity)
-	fmt.Println("Failed count:", this.FailedCount)
-	fmt.Println("Failed capacity:", this.FailedCapacity)
-	fmt.Println(this.printTitle())
+	log.Println(this.printTitle())
+	log.Println("Start at:", time.Unix(this.StartAt, 0))
+	log.Println("End at:", time.Unix(this.EndAt, 0))
+	log.Println("Succeed count:", this.SucceedCount)
+	log.Println("Succeed capacity:", this.SucceedCapacity)
+	log.Println("Failed count:", this.FailedCount)
+	log.Println("Failed capacity:", this.FailedCapacity)
+	log.Println(this.printTitle())
 }
 
 func (this *SyncResult) PrintFailedFiles() {
 	for _, f := range this.FailedFiles {
-		fmt.Println(f)
+		log.Println(f)
 	}
 }
 
