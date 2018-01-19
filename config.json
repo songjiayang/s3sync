@@ -1,5 +1,5 @@
 {
-  "root": "/Users/sjy/workspace/golang/src/github.com/file_scan",
+  "root": "",
   "scan_worker": 20,
   "db": "./data/db",
   "s3sync": {
