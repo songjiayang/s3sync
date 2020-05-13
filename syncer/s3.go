@@ -45,7 +45,7 @@ func newS3(cfg *S3Config) *s3client {
 	s3session.Config.WithRegion(cfg.Region)
 	s3session.Config.WithCredentials(s3credential)
 	s3session.Config.WithMaxRetries(1)
-	s3session.Config.WithS3ForcePathStyle(true)
+	// s3session.Config.WithS3ForcePathStyle(true)
 
 	s3service := s3.New(s3session, nil)
 
