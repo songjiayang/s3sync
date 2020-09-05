@@ -12,8 +12,8 @@ type Config struct {
 	S3Config *S3Config `json:"s3"`
 }
 
-func Run(stg *storage.DiskStorage, cfg *Config, trim bool, root string, sResult *SyncResult) {
-	queue := make(chan *file.FileModel, cfg.Workers)
+func Run(stg *storage.DiskStorage, cfg *Config, trim, autoContentType bool, root string, sResult *SyncResult) {
+	queue := make(chan *file.Model, cfg.Workers)
 
 	var wg sync.WaitGroup
 	wg.Add(cfg.Workers)
@@ -21,10 +21,10 @@ func Run(stg *storage.DiskStorage, cfg *Config, trim bool, root string, sResult 
 	s3client := newS3(cfg.S3Config)
 
 	for i := 0; i < cfg.Workers; i++ {
-		go func(wg *sync.WaitGroup, queue chan *file.FileModel, sr *SyncResult) {
+		go func(wg *sync.WaitGroup, queue chan *file.Model, sr *SyncResult) {
 			defer wg.Done()
 			for fileModel := range queue {
-				err := s3client.uploadFile(fileModel.Name, trim, root)
+				err := s3client.uploadFile(fileModel.Name, trim, autoContentType, root)
 				// maybe there need write lock
 				if err == nil {
 					fileModel.Uploaded()
@@ -33,7 +33,7 @@ func Run(stg *storage.DiskStorage, cfg *Config, trim bool, root string, sResult 
 				}
 
 				// update sync result
-				go func(sr *SyncResult, fileModel *file.FileModel, succeed bool) {
+				go func(sr *SyncResult, fileModel *file.Model, succeed bool) {
 					sr.mux.Lock()
 					if succeed {
 						sr.SucceedCount++

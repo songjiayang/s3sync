@@ -59,7 +59,7 @@ func newS3(cfg *S3Config) *s3client {
 	}
 }
 
-func (this *s3client) uploadFile(file string, trim bool, root string) (err error) {
+func (c *s3client) uploadFile(file string, trim, autoContentType bool, root string) (err error) {
 	buf, err := ioutil.ReadFile(file)
 	if err != nil {
 		fmt.Printf("read file with ERROR: %v\n", err)
@@ -67,7 +67,7 @@ func (this *s3client) uploadFile(file string, trim bool, root string) (err error
 	}
 
 	payload := &s3.PutObjectInput{
-		Bucket: aws.String(this.cfg.Bucket),
+		Bucket: aws.String(c.cfg.Bucket),
 		Body:   bytes.NewReader(buf),
 	}
 
@@ -78,7 +78,14 @@ func (this *s3client) uploadFile(file string, trim bool, root string) (err error
 		payload.Key = aws.String(file)
 	}
 
-	_, err = this.s3service.PutObject(payload)
+	if autoContentType {
+		fileExt := strings.Replace(filepath.Ext(*payload.Key), ".", "", -1)
+		if fileType := resolveFileType(fileExt); fileType != "" {
+			payload.ContentType = &fileType
+		}
+	}
+
+	_, err = c.s3service.PutObject(payload)
 	if err != nil {
 		fmt.Printf("s3service.PutObject(%v): %v\n", payload, err)
 	}
@@ -86,15 +93,15 @@ func (this *s3client) uploadFile(file string, trim bool, root string) (err error
 	return
 }
 
-func (this *s3client) listObjects(marker *string) (*s3.ListObjectsOutput, error) {
-	return this.s3service.ListObjects(&s3.ListObjectsInput{
-		Bucket:  aws.String(this.cfg.Bucket),
+func (c *s3client) listObjects(marker *string) (*s3.ListObjectsOutput, error) {
+	return c.s3service.ListObjects(&s3.ListObjectsInput{
+		Bucket:  aws.String(c.cfg.Bucket),
 		MaxKeys: aws.Int64(100),
 		Marker:  marker,
 	})
 }
 
-func (this *s3client) downFile(root string, key *string) (err error) {
+func (c *s3client) downFile(root string, key *string) (err error) {
 	fpath := filepath.Join(root, *key)
 	os.MkdirAll(path.Dir(fpath), os.ModePerm)
 
@@ -104,10 +111,23 @@ func (this *s3client) downFile(root string, key *string) (err error) {
 	}
 	defer file.Close()
 
-	_, err = this.downloader.Download(file, &s3.GetObjectInput{
-		Bucket: aws.String(this.cfg.Bucket),
+	_, err = c.downloader.Download(file, &s3.GetObjectInput{
+		Bucket: aws.String(c.cfg.Bucket),
 		Key:    key,
 	})
 
 	return
+}
+
+func resolveFileType(ext string) string {
+	switch ext {
+	case "css", "js", "html", "htm":
+		return fmt.Sprintf("text/%s", ext)
+	case "png", "jpg":
+		return fmt.Sprintf("image/%s", ext)
+	case "svg":
+		return "image/svg+xml"
+	default:
+		return ""
+	}
 }

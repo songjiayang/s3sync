@@ -16,21 +16,19 @@ var (
 	conf                string
 	rootPath            string
 	upload, download, d bool
+	lu, luf             bool
 
-	lu, luf bool
-
-	defaultRootpath = "./data/test"
+	defaultRootPath = "./data/test"
 )
 
 func init() {
 	flag.StringVar(&conf, "config", "./config.json", "the config file")
-	flag.StringVar(&rootPath, "r", defaultRootpath, "root path")
-
+	flag.StringVar(&rootPath, "r", defaultRootPath, "root path")
 	flag.BoolVar(&upload, "upload", false, "upload files to storage")
 	flag.BoolVar(&download, "download", false, "download files from storage")
 	flag.BoolVar(&lu, "lu", false, "list upload status")
 	flag.BoolVar(&luf, "luf", false, "list all upload failed files")
-	flag.BoolVar(&d, "d", false, "run sync task backgound with interval time, default: 30s")
+	flag.BoolVar(&d, "d", false, "run sync task background with interval time, default: 30s")
 }
 
 func main() {
@@ -43,10 +41,10 @@ func main() {
 	}
 
 	// fix rootPath
-	if rootPath != defaultRootpath {
+	if rootPath != defaultRootPath {
 		cfg.Root = rootPath
 	} else if cfg.Root == "" {
-		cfg.Root = defaultRootpath
+		cfg.Root = defaultRootPath
 	}
 
 	syncStatus()
@@ -86,7 +84,7 @@ func push(cfg *config.Config) {
 	log.Println("left upload files", stg.UploadFilesCount)
 	go stg.Status()
 	syncResult := syncer.NewSyncResult("upload")
-	syncer.Run(stg, cfg.SyncConfig, cfg.Trim, cfg.Root, syncResult)
+	syncer.Run(stg, cfg.SyncConfig, cfg.Trim, cfg.AutoContentType, cfg.Root, syncResult)
 	log.Println("end upload job .......")
 
 	syncResult.End()

@@ -31,22 +31,22 @@ func NewSyncResult(name string) *SyncResult {
 	}
 }
 
-func (this *SyncResult) End() {
-	this.EndAt = time.Now().Unix()
+func (r *SyncResult) End() {
+	r.EndAt = time.Now().Unix()
 }
 
-func (this *SyncResult) Persist() {
-	util.GzWrite(this.path(), this)
+func (r *SyncResult) Persist() {
+	util.GzWrite(r.path(), r)
 }
 
-func (this *SyncResult) Recover() (err error) {
-	b, err := util.GzRead(this.path())
+func (r *SyncResult) Recover() (err error) {
+	b, err := util.GzRead(r.path())
 	if err != nil {
 		fmt.Printf("ioutil.ReadAll(): %v\n", err)
 		return
 	}
 
-	err = json.Unmarshal(b, this)
+	err = json.Unmarshal(b, r)
 	if err != nil {
 		fmt.Printf("json.Unmarshal(): %v\n", err)
 	}
@@ -54,27 +54,27 @@ func (this *SyncResult) Recover() (err error) {
 	return
 }
 
-func (this *SyncResult) PrintStat() {
-	log.Println(this.printTitle())
-	log.Println("Start at:", time.Unix(this.StartAt, 0))
-	log.Println("End at:", time.Unix(this.EndAt, 0))
-	log.Println("Succeed count:", this.SucceedCount)
-	log.Println("Succeed capacity:", this.SucceedCapacity)
-	log.Println("Failed count:", this.FailedCount)
-	log.Println("Failed capacity:", this.FailedCapacity)
-	log.Println(this.printTitle())
+func (r *SyncResult) PrintStat() {
+	log.Println(r.printTitle())
+	log.Println("Start at:", time.Unix(r.StartAt, 0))
+	log.Println("End at:", time.Unix(r.EndAt, 0))
+	log.Println("Succeed count:", r.SucceedCount)
+	log.Println("Succeed capacity:", r.SucceedCapacity)
+	log.Println("Failed count:", r.FailedCount)
+	log.Println("Failed capacity:", r.FailedCapacity)
+	log.Println(r.printTitle())
 }
 
-func (this *SyncResult) PrintFailedFiles() {
-	for _, f := range this.FailedFiles {
+func (r *SyncResult) PrintFailedFiles() {
+	for _, f := range r.FailedFiles {
 		log.Println(f)
 	}
 }
 
-func (this *SyncResult) path() string {
-	return "./data/" + this.name + "_result"
+func (r *SyncResult) path() string {
+	return "./data/" + r.name + "_result"
 }
 
-func (this *SyncResult) printTitle() string {
-	return "-------- " + this.name + " status ---------"
+func (r *SyncResult) printTitle() string {
+	return "-------- " + r.name + " status ---------"
 }

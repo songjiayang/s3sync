@@ -12,7 +12,7 @@ import (
 type Scanner struct {
 	c       chan string
 	folders []string
-	files   []*ff.FileModel
+	files   []*ff.Model
 	leftJob int // left scan folder number
 	dmux    sync.RWMutex
 	fmux    sync.RWMutex
@@ -22,7 +22,7 @@ func NewScanner(root string, w int) *Scanner {
 	s := &Scanner{
 		c:       make(chan string, w),
 		folders: make([]string, 1, 128),
-		files:   make([]*ff.FileModel, 0, 128),
+		files:   make([]*ff.Model, 0, 128),
 		leftJob: 1,
 	}
 
@@ -31,39 +31,39 @@ func NewScanner(root string, w int) *Scanner {
 	return s
 }
 
-func (this *Scanner) Scan() {
+func (s *Scanner) Scan() {
 	var wg sync.WaitGroup
 	wg.Add(1)
 
 	// make the worker running
-	go this.run(&wg)
-	go this.pushJob(&wg)
+	go s.run(&wg)
+	go s.pushJob(&wg)
 
 	wg.Wait()
-	close(this.c)
+	close(s.c)
 }
 
-func (this *Scanner) Files() []*ff.FileModel {
-	return this.files
+func (s *Scanner) Files() []*ff.Model {
+	return s.files
 }
 
-func (this *Scanner) Status() {
+func (s *Scanner) Status() {
 	for {
-		if this.leftJob == 0 {
+		if s.leftJob == 0 {
 			break
 		}
 		time.Sleep(time.Second)
-		log.Println("scanned files", len(this.Files()))
+		log.Println("scanned files", len(s.Files()))
 	}
 }
 
-func (this *Scanner) pushJob(wg *sync.WaitGroup) {
+func (s *Scanner) pushJob(wg *sync.WaitGroup) {
 	for {
-		d := this.pop()
+		d := s.pop()
 
-		this.dmux.Lock()
-		leftJob := this.leftJob
-		this.dmux.Unlock()
+		s.dmux.Lock()
+		leftJob := s.leftJob
+		s.dmux.Unlock()
 
 		if leftJob == 0 {
 			wg.Done()
@@ -71,40 +71,40 @@ func (this *Scanner) pushJob(wg *sync.WaitGroup) {
 		}
 
 		if d != "" {
-			this.c <- d
+			s.c <- d
 		}
 	}
 }
 
-func (this *Scanner) run(wg *sync.WaitGroup) {
-	for i := 0; i < cap(this.c); i++ {
-		go this.list(wg)
+func (s *Scanner) run(wg *sync.WaitGroup) {
+	for i := 0; i < cap(s.c); i++ {
+		go s.list(wg)
 	}
 }
 
-func (this *Scanner) list(wg *sync.WaitGroup) {
-	for dir := range this.c {
+func (s *Scanner) list(wg *sync.WaitGroup) {
+	for dir := range s.c {
 		_folders, _files := lib.ListDir(dir)
 		l := len(_folders) - 1
 
-		this.dmux.Lock()
-		this.folders = append(this.folders, _folders...)
-		this.leftJob += l
-		this.dmux.Unlock()
+		s.dmux.Lock()
+		s.folders = append(s.folders, _folders...)
+		s.leftJob += l
+		s.dmux.Unlock()
 
-		this.fmux.Lock()
-		this.files = append(this.files, _files...)
-		this.fmux.Unlock()
+		s.fmux.Lock()
+		s.files = append(s.files, _files...)
+		s.fmux.Unlock()
 	}
 }
 
-func (this *Scanner) pop() (ret string) {
-	this.dmux.Lock()
-	l := len(this.folders)
+func (s *Scanner) pop() (ret string) {
+	s.dmux.Lock()
+	l := len(s.folders)
 	if l > 0 {
-		ret = this.folders[l-1]
-		this.folders = this.folders[0 : l-1]
+		ret = s.folders[l-1]
+		s.folders = s.folders[0 : l-1]
 	}
-	this.dmux.Unlock()
+	s.dmux.Unlock()
 	return
 }
